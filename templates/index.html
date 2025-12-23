@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Automated Email Scheduler</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<h2>📧 Automated Email Scheduler</h2>
+
+<form id="emailForm">
+    <input type="email" id="sender" placeholder="Sender Gmail" required>
+    <input type="password" id="password" placeholder="Gmail App Password" required>
+    <input type="email" id="receiver" placeholder="Receiver Email" required>
+    <input type="text" id="subject" placeholder="Subject" required>
+    <textarea id="message" placeholder="Message" required></textarea>
+    <input type="datetime-local" id="datetime" required>
+
+    <button type="submit">Schedule Email</button>
+</form>
+
+<p id="status"></p>
+
+<script>
+document.getElementById("emailForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const data = {
+        sender: sender.value,
+        password: password.value,
+        receiver: receiver.value,
+        subject: subject.value,
+        message: message.value,
+        datetime: datetime.value
+    };
+
+    const response = await fetch("/schedule", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    });
+
+    const result = await response.json();
+
+    if (result.status === "success") {
+        document.getElementById("status").innerText =
+            "✅ Email Scheduled Successfully!";
+    } else {
+        alert(
+            "❌ Email not scheduled!\n\n" +
+            (result.message || "Invalid Gmail or App Password")
+        );
+    }
+});
+</script>
+
+</body>
+</html>
